@@ -62,7 +62,12 @@ export function createSortedStateAdapter<T>(selectId: any, sort: any): any {
     }
 
     const original = state.entities[update.id];
-    const updated = Object.assign({}, original, update.changes);
+    // const updated = Object.assign({}, original, update.changes);
+    const updated = Object.assign(
+      Object.create(Object.getPrototypeOf(original)),
+      original,
+      update.changes
+    );
     const newKey = selectIdValue(updated, selectId);
 
     delete state.entities[update.id];

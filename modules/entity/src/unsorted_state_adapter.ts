@@ -97,7 +97,12 @@ export function createUnsortedStateAdapter<T>(selectId: IdSelector<T>): any {
     state: any
   ): boolean {
     const original = state.entities[update.id];
-    const updated: T = Object.assign({}, original, update.changes);
+    // const updated: T = Object.assign({}, original, update.changes);
+    const updated: T = Object.assign(
+      Object.create(Object.getPrototypeOf(original)),
+      original,
+      update.changes
+    );
     const newKey = selectIdValue(updated, selectId);
     const hasNewKey = newKey !== update.id;
 
