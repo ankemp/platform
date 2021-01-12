@@ -12,9 +12,13 @@ import { createStateOperator, DidMutate } from './state_adapter';
 import { selectIdValue } from './utils';
 
 export function createUnsortedStateAdapter<T>(
-  selectId: IdSelector<T>
+  selectId: IdSelector<T>,
+  allowPrototype: boolean
 ): EntityStateAdapter<T>;
-export function createUnsortedStateAdapter<T>(selectId: IdSelector<T>): any {
+export function createUnsortedStateAdapter<T>(
+  selectId: IdSelector<T>,
+  allowPrototype: boolean
+): any {
   type R = EntityState<T>;
 
   function addOneMutably(entity: T, state: R): DidMutate;
@@ -114,7 +118,11 @@ export function createUnsortedStateAdapter<T>(selectId: IdSelector<T>): any {
     state: any
   ): boolean {
     const original = state.entities[update.id];
-    const updated: T = Object.assign({}, original, update.changes);
+    const updated: T = Object.assign(
+      allowPrototype ? Object.create(Object.getPrototypeOf(original)) : {},
+      original,
+      update.changes
+    );
     const newKey = selectIdValue(updated, selectId);
     const hasNewKey = newKey !== update.id;
 

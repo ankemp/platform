@@ -14,10 +14,12 @@ export function createEntityAdapter<T>(
   options: {
     selectId?: IdSelector<T>;
     sortComparer?: false | Comparer<T>;
+    allowPrototype?: boolean;
   } = {}
 ): EntityAdapter<T> {
-  const { selectId, sortComparer }: EntityDefinition<T> = {
+  const { selectId, sortComparer, allowPrototype }: EntityDefinition<T> = {
     sortComparer: false,
+    allowPrototype: false,
     selectId: (instance: any) => instance.id,
     ...options,
   };
@@ -25,8 +27,8 @@ export function createEntityAdapter<T>(
   const stateFactory = createInitialStateFactory<T>();
   const selectorsFactory = createSelectorsFactory<T>();
   const stateAdapter = sortComparer
-    ? createSortedStateAdapter(selectId, sortComparer)
-    : createUnsortedStateAdapter(selectId);
+    ? createSortedStateAdapter(selectId, sortComparer, allowPrototype)
+    : createUnsortedStateAdapter(selectId, allowPrototype);
 
   return {
     selectId,

@@ -49,6 +49,7 @@ export interface EntityState<T> {
 export interface EntityDefinition<T> {
   selectId: IdSelector<T>;
   sortComparer: false | Comparer<T>;
+  allowPrototype: boolean;
 }
 
 export interface EntityStateAdapter<T> {

@@ -14,13 +14,19 @@ import { selectIdValue } from './utils';
 
 export function createSortedStateAdapter<T>(
   selectId: IdSelector<T>,
-  sort: Comparer<T>
+  sort: Comparer<T>,
+  allowPrototype: boolean
 ): EntityStateAdapter<T>;
-export function createSortedStateAdapter<T>(selectId: any, sort: any): any {
+export function createSortedStateAdapter<T>(
+  selectId: any,
+  sort: any,
+  allowPrototype: any
+): any {
   type R = EntityState<T>;
 
   const { removeOne, removeMany, removeAll } = createUnsortedStateAdapter(
-    selectId
+    selectId,
+    allowPrototype
   );
 
   function addOneMutably(entity: T, state: R): DidMutate;
@@ -76,7 +82,11 @@ export function createSortedStateAdapter<T>(selectId: any, sort: any): any {
     }
 
     const original = state.entities[update.id];
-    const updated = Object.assign({}, original, update.changes);
+    const updated = Object.assign(
+      allowPrototype ? Object.create(Object.getPrototypeOf(original)) : {},
+      original,
+      update.changes
+    );
     const newKey = selectIdValue(updated, selectId);
 
     delete state.entities[update.id];
